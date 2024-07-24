@@ -51,13 +51,23 @@ start:
 	mov	cx,#256
 	sub	si,si
 	sub	di,di
-	rep
-	movw
+	; 将DS:SI 复制512字节到 ES:DI
+	; 0x7c00 到 0x90000
+	; rep重复命令通过cx寄存器计数
+	rep movw
+	; 跳转到 0x9000:go
 	jmpi	go,INITSEG
+	; CS是code segment 代码寄存器
+	; CS:IP存储当前执行代码的位置
+	; CS是基地址，当前位置是0x9000
+	; IP是偏移地址，当前是go的代码地址
 go:	mov	ax,cs
 	mov	ds,ax
 	mov	es,ax
 ! put stack at 0x9ff00.
+	; SS stack segment堆栈寄存器
+	; SP stack pointer堆栈指针
+	; SS:SP 栈访问地址
 	mov	ss,ax
 	mov	sp,#0xFF00		! arbitrary value >>512
 
